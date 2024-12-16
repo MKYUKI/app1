@@ -1,0 +1,152 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Card from '../components/Card.astro';
+import HorizontalCard from '../components/HorizontalCard.astro';
+import TimeLine from '../components/TimeLine.astro';
+import Chatbot from '../components/Chatbot.astro';
+import ContactForm from '../components/ContactForm.astro';
+import TextGenerator from '../components/TextGenerator.astro';
+
+const projects = [
+  {
+    title: "AIプロジェクト1",
+    description: "AIを活用した革新的なプロジェクトです。",
+    image: "/projects/project1.webp",
+    link: "/projects/ai-project1"
+  },
+  {
+    title: "AIプロジェクト2",
+    description: "次世代のAIソリューションです。",
+    image: "/projects/project2.webp",
+    link: "/projects/ai-project2"
+  }
+];
+
+const timelineEvents = [
+  {
+    title: "プロジェクト開始",
+    date: "2023-01-01",
+    description: "Masaki Kusakaのウェブサイトプロジェクトを開始しました。"
+  },
+  {
+    title: "バックエンドデプロイ",
+    date: "2023-03-15",
+    description: "FastAPIを使用したバックエンドをRenderにデプロイしました。"
+  },
+  {
+    title: "フロントエンド完成",
+    date: "2023-06-20",
+    description: "AstroとTailwind CSSを使用してフロントエンドを完成させました。"
+  },
+  {
+    title: "公式リリース",
+    date: "2024-01-01",
+    description: "ウェブサイトを公式にリリースしました。"
+  }
+];
+---
+<BaseLayout>
+  <!-- ホームセクション -->
+  <section class="text-center mb-16">
+    <h1 class="text-4xl font-bold mb-4">ようこそ、Masaki KusakaのWebサイトへ！</h1>
+    <p class="mb-8">AIと最新技術を駆使した革新的なウェブサイトです。</p>
+    
+    <!-- プロフィール画像 -->
+    <img src="/profile.webp" alt="Masaki Kusaka" class="mx-auto rounded-full w-40 h-40 mb-8" />
+    
+    <!-- バナー画像 -->
+    <img src="/social_img.webp" alt="Social Banner" class="mx-auto w-full max-w-2xl mb-8" />
+    
+    <!-- Sentiment Analysis フォーム -->
+    <div class="max-w-lg mx-auto">
+      <form id="ai-form" class="mb-8">
+        <label for="phone" class="block text-left mb-2">電話番号 (例: 070-8943-2121)</label>
+        <input type="tel" id="phone" name="phone" pattern="^0\d{1,4}-\d{1,4}-\d{4}$" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="例: 070-8943-2121" required />
+        
+        <label for="inputText" class="block text-left mb-2">テキスト</label>
+        <textarea id="inputText" class="w-full p-2 border border-gray-300 rounded mb-4" rows="4" placeholder="テキストを入力してください..."></textarea>
+        
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">感情分析を実行</button>
+      </form>
+      <div id="result" class="mt-4 text-lg"></div>
+    </div>
+  </section>
+
+  <!-- プロジェクトセクション -->
+  <section class="mb-16">
+    <h2 class="text-2xl font-bold mb-4">プロジェクト</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {projects.map(project => (
+        <Card key={project.title} title={project.title} description={project.description} image={project.image} link={project.link} />
+      ))}
+    </div>
+  </section>
+
+  <!-- タイムラインセクション -->
+  <section class="mb-16">
+    <TimeLine events={timelineEvents} />
+  </section>
+
+  <!-- チャットボットセクション -->
+  <section class="text-center">
+    <Chatbot />
+  </section>
+
+  <!-- テキスト生成セクション -->
+  <section class="text-center mt-16">
+    <TextGenerator />
+  </section>
+
+  <!-- お問い合わせセクション -->
+  <section class="text-center mt-16">
+    <h2 class="text-2xl font-bold mb-4">お問い合わせ</h2>
+    <ContactForm />
+  </section>
+</BaseLayout>
+
+<!-- Sentiment Analysis スクリプト -->
+<script>
+  const form = document.getElementById('ai-form');
+  const resultDiv = document.getElementById('result');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const phone = document.getElementById('phone').value.trim();
+    const inputText = document.getElementById('inputText').value.trim();
+
+    // 電話番号のバリデーション
+    const phonePattern = /^0\d{1,4}-\d{1,4}-\d{4}$/;
+    if (!phonePattern.test(phone)) {
+      resultDiv.innerText = '正しい電話番号を入力してください。';
+      return;
+    }
+
+    if (!inputText) {
+      resultDiv.innerText = 'テキストを入力してください。';
+      return;
+    }
+
+    resultDiv.innerText = '解析中...';
+
+    try {
+      const response = await fetch('https://cloon0.onrender.com/predict/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: inputText, phone }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        resultDiv.innerText = `エラー: ${errorData.detail}`;
+        return;
+      }
+
+      const data = await response.json();
+      resultDiv.innerText = `予測結果: ${data.label} (信頼度: ${(data.score * 100).toFixed(2)}%)`;
+    } catch (error) {
+      resultDiv.innerText = `エラー: ${error.message}`;
+    }
+  });
+</script>

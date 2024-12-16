@@ -1,0 +1,17 @@
+---
+import { getCollection } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+
+const posts = await getCollection('blog');
+---
+<PostLayout>
+  <h1 class="text-3xl font-bold mb-4">ブログ</h1>
+  <ul>
+    {posts.map(post => (
+      <li key={post.id} class="mb-4">
+        <a href={`/blog/${post.slug}`} class="text-blue-500 hover:underline">{post.title}</a>
+        <p class="text-gray-600">{post.description}</p>
+      </li>
+    ))}
+  </ul>
+</PostLayout>

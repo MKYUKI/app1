@@ -1,0 +1,16 @@
+---
+import { getEntryBySlug } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+
+const { slug } = Astro.params;
+const post = await getEntryBySlug('blog', slug);
+
+if (!post) {
+  throw new Error(`Post with slug "${slug}" not found`);
+}
+---
+<PostLayout>
+  <h1 class="text-3xl font-bold mb-4">{post.title}</h1>
+  <time class="block mb-2 text-sm font-normal leading-none text-gray-400">{post.date.toDateString()}</time>
+  <Markdown>{post.body}</Markdown>
+</PostLayout>

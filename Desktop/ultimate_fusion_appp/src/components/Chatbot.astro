@@ -1,0 +1,63 @@
+---
+---
+<div class="chatbot-container max-w-lg mx-auto p-4 border border-gray-300 rounded shadow-md">
+  <h2 class="text-2xl font-bold mb-4">チャットボット</h2>
+  <div id="chat-log" class="h-64 overflow-y-auto mb-4 p-2 border rounded bg-gray-50">
+    <!-- チャットの履歴がここに表示されます -->
+  </div>
+  <form id="chat-form">
+    <input type="text" id="chat-input" class="w-full p-2 border border-gray-300 rounded mb-2" placeholder="メッセージを入力..." required />
+    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">送信</button>
+  </form>
+</div>
+
+<script>
+  const form = document.getElementById('chat-form');
+  const chatLog = document.getElementById('chat-log');
+  const chatInput = document.getElementById('chat-input');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const message = chatInput.value.trim();
+    if (!message) return;
+
+    // ユーザーのメッセージを表示
+    const userMessage = document.createElement('div');
+    userMessage.className = 'text-right mb-2';
+    userMessage.innerHTML = `<span class="inline-block bg-blue-500 text-white px-3 py-1 rounded-full">${message}</span>`;
+    chatLog.appendChild(userMessage);
+    chatLog.scrollTop = chatLog.scrollHeight;
+
+    chatInput.value = '';
+
+    try {
+      const response = await fetch('https://cloon0-backend.onrender.com/chat/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'エラーが発生しました。');
+      }
+
+      const data = await response.json();
+
+      // ボットのメッセージを表示
+      const botMessage = document.createElement('div');
+      botMessage.className = 'text-left mb-2';
+      botMessage.innerHTML = `<span class="inline-block bg-gray-300 text-black px-3 py-1 rounded-full">${data.reply}</span>`;
+      chatLog.appendChild(botMessage);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    } catch (error) {
+      const errorMessage = document.createElement('div');
+      errorMessage.className = 'text-left mb-2';
+      errorMessage.innerHTML = `<span class="inline-block bg-red-500 text-white px-3 py-1 rounded-full">${error.message}</span>`;
+      chatLog.appendChild(errorMessage);
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+  });
+</script>

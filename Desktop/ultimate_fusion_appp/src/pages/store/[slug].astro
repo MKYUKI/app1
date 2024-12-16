@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const post = await Astro.glob('./**/*.md');
+const postImportResult = await import(`../pages/${Astro.params.slug}.md`);
+const { Content } = postImportResult;
+---
+
+<BaseLayout>
+  <article class="prose lg:prose-xl mx-auto">
+    <Content />
+  </article>
+</BaseLayout>

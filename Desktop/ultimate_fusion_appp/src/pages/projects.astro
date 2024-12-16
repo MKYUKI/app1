@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Card from '../components/Card.astro';
+
+const projects = [
+  {
+    title: "AIプロジェクト1",
+    description: "革新的なプロジェクトです。",
+    image: "/projects/project1.webp",
+    link: "/projects/ai-project1"
+  },
+  {
+    title: "AIプロジェクト2",
+    description: "次世代のAIソリューションです。",
+    image: "/projects/project2.webp",
+    link: "/projects/ai-project2"
+  }
+];
+---
+<BaseLayout>
+  <h1 class="text-3xl font-bold mb-4">プロジェクト</h1>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {projects.map(project => (
+      <Card key={project.title} title={project.title} description={project.description} image={project.image} link={project.link} />
+    ))}
+  </div>
+</BaseLayout>
+

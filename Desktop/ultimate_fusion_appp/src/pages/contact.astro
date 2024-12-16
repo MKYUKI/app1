@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactForm from '../components/ContactForm.astro';
+---
+<BaseLayout title="お問い合わせ" description="Masaki Kusakaへのお問い合わせページです。">
+  <section class="text-center mt-16">
+    <h1 class="text-3xl font-bold mb-4">お問い合わせ</h1>
+    <p class="mb-8">ご質問やご提案がありましたら、以下のフォームからお気軽にお問い合わせください。</p>
+    <ContactForm />
+  </section>
+</BaseLayout>

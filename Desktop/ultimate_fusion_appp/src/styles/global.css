@@ -1,0 +1,58 @@
+/* src/styles/global.css */
+
+/* Tailwind CSSの基本設定 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* カスタムスタイル */
+body {
+  @apply bg-gray-100 text-gray-900;
+}
+
+header, footer {
+  @apply bg-white shadow-md;
+}
+
+header h1 {
+  @apply text-xl font-bold;
+}
+
+nav ul li a {
+  @apply hover:text-blue-500 transition-colors;
+}
+
+footer p {
+  @apply mb-2;
+}
+
+footer a img {
+  @apply h-6 w-6;
+}
+
+.chatbot-container, .contact-form, .text-generator, .timeline-container {
+  @apply p-2;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+  header, footer {
+    @apply p-2;
+  }
+
+  nav ul {
+    @apply flex-col items-center;
+  }
+
+  nav ul li {
+    @apply mb-2;
+  }
+
+  main {
+    @apply p-2;
+  }
+
+  .chatbot-container, .contact-form, .text-generator, .timeline-container {
+    @apply p-2;
+  }
+}

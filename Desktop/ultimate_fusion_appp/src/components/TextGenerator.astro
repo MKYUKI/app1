@@ -1,0 +1,58 @@
+---
+---
+<div class="max-w-lg mx-auto p-4 border border-gray-300 rounded shadow-md mt-8">
+  <h2 class="text-2xl font-bold mb-4">テキスト生成AI</h2>
+  <form id="generate-form">
+    <div class="mb-4">
+      <label for="prompt" class="block text-left mb-2">プロンプト</label>
+      <input type="text" id="prompt" name="prompt" class="w-full p-2 border border-gray-300 rounded" placeholder="例: 未来のAIについて" required />
+    </div>
+    <div class="mb-4">
+      <label for="max_length" class="block text-left mb-2">生成するテキストの最大長</label>
+      <input type="number" id="max_length" name="max_length" class="w-full p-2 border border-gray-300 rounded" value="50" min="10" max="500" required />
+    </div>
+    <button type="submit" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors">テキスト生成</button>
+  </form>
+  <div id="generate-result" class="mt-4 text-lg whitespace-pre-wrap"></div>
+</div>
+
+<!-- TextGenerator スクリプト -->
+<script>
+  const form = document.getElementById('generate-form');
+  const resultDiv = document.getElementById('generate-result');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const prompt = document.getElementById('prompt').value.trim();
+    const maxLength = parseInt(document.getElementById('max_length').value.trim(), 10);
+
+    if (!prompt) {
+      resultDiv.innerText = 'プロンプトを入力してください。';
+      return;
+    }
+
+    resultDiv.innerText = '生成中...';
+
+    try {
+      const response = await fetch('https://cloon0-backend.onrender.com/generate/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt, max_length: maxLength }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        resultDiv.innerText = `エラー: ${errorData.detail}`;
+        return;
+      }
+
+      const data = await response.json();
+      resultDiv.innerText = `生成されたテキスト:\n${data.generated_text}`;
+    } catch (error) {
+      resultDiv.innerText = `エラー: ${error.message}`;
+    }
+  });
+</script>

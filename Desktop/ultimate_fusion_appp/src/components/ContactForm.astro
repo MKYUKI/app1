@@ -1,0 +1,71 @@
+---
+---
+<div class="contact-form max-w-lg mx-auto p-4 border border-gray-300 rounded shadow-md">
+  <form id="contact-form">
+    <div class="mb-4">
+      <label for="name" class="block text-left mb-2">名前</label>
+      <input type="text" id="name" name="name" class="w-full p-2 border border-gray-300 rounded" placeholder="例: Masaki Kusaka" required />
+    </div>
+    <div class="mb-4">
+      <label for="email" class="block text-left mb-2">メールアドレス</label>
+      <input type="email" id="email" name="email" class="w-full p-2 border border-gray-300 rounded" placeholder="例: example@example.com" required />
+    </div>
+    <div class="mb-4">
+      <label for="phone" class="block text-left mb-2">電話番号 (例: 070-8943-2121)</label>
+      <input type="tel" id="phone" name="phone" pattern="^0\d{1,4}-\d{1,4}-\d{4}$" class="w-full p-2 border border-gray-300 rounded" placeholder="例: 070-8943-2121" required />
+    </div>
+    <div class="mb-4">
+      <label for="message" class="block text-left mb-2">メッセージ</label>
+      <textarea id="message" name="message" class="w-full p-2 border border-gray-300 rounded" rows="4" placeholder="メッセージを入力してください..." required></textarea>
+    </div>
+    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors">送信</button>
+  </form>
+  <div id="contact-result" class="mt-4 text-lg"></div>
+</div>
+
+<script>
+  const form = document.getElementById('contact-form');
+  const resultDiv = document.getElementById('contact-result');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const message = document.getElementById('message').value.trim();
+
+    // フォームのバリデーション
+    const phonePattern = /^0\d{1,4}-\d{1,4}-\d{4}$/;
+    if (!phonePattern.test(phone)) {
+      resultDiv.innerText = '正しい電話番号を入力してください。';
+      return;
+    }
+
+    if (!name || !email || !message) {
+      resultDiv.innerText = 'すべてのフィールドを入力してください。';
+      return;
+    }
+
+    resultDiv.innerText = '送信中...';
+
+    try {
+      const response = await fetch('https://cloon0-backend.onrender.com/contact/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, phone, message }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'エラーが発生しました。');
+      }
+
+      resultDiv.innerText = 'メッセージが正常に送信されました。';
+      form.reset();
+    } catch (error) {
+      resultDiv.innerText = `エラー: ${error.message}`;
+    }
+  });
+</script>
