@@ -1,0 +1,15 @@
+# 仮想環境ディレクトリ
+venv/
+
+# Pythonのキャッシュファイル
+__pycache__/
+*.pyc
+
+# OS固有のファイル
+.DS_Store
+
+# Node.jsの依存関係
+node_modules/
+
+# その他の不要なファイルやディレクトリ
+.env
